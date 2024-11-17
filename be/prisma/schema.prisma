@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  number    String    @unique
+  email     String    @unique
+  password  String
+  profile   Profile?
+  orders    Order[]
+  cart      Cart?
+  reviews   Review[]
+  verified  Boolean @default(false)
+  createdAt DateTime  @default(now()) @db.Timestamptz
+  updatedAt DateTime  @updatedAt @db.Timestamptz // Updated At field
+  deletedAt DateTime? @db.Timestamptz // Soft delete field
+
+  @@map("users")
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  image     String
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz // Updated At field
+  deletedAt DateTime? @db.Timestamptz // Soft delete field
+
+  @@map("profiles")
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  image       String
+  categoryId  Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  reviews     Review[]
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz // Updated At field
+  deletedAt   DateTime? @db.Timestamptz // Soft delete field
+
+  @@map("products")
+  CartItem    CartItem[]  // Relationship with CartItem
+  OrderItem   OrderItem[] // Relationship with OrderItem
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime   @default(now()) @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @db.Timestamptz // Updated At field
+  deletedAt   DateTime?  @db.Timestamptz // Soft delete field
+
+  @@map("categories")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+  totalAmount Float
+  status      String      @default("Pending") // Pending, Shipped, Delivered
+  createdAt   DateTime    @default(now()) @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @db.Timestamptz // Updated At field
+  deletedAt   DateTime?   @db.Timestamptz // Soft delete field
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  orderId    Int
+  order      Order    @relation(fields: [orderId], references: [id])
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  price      Float
+  createdAt  DateTime @default(now()) @db.Timestamptz
+  updatedAt  DateTime @updatedAt @db.Timestamptz // Updated At field
+  deletedAt  DateTime? @db.Timestamptz // Soft delete field
+
+  @@map("order_items")
+}
+
+model Cart {
+  id         Int        @id @default(autoincrement())
+  userId     Int        @unique
+  user       User       @relation(fields: [userId], references: [id])
+  items      CartItem[]
+  createdAt  DateTime   @default(now()) @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @db.Timestamptz // Updated At field
+  deletedAt  DateTime?  @db.Timestamptz // Soft delete field
+
+  @@map("carts")
+}
+
+model CartItem {
+  id         Int      @id @default(autoincrement())
+  cartId     Int
+  cart       Cart     @relation(fields: [cartId], references: [id])
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int      @default(1)
+  createdAt  DateTime @default(now()) @db.Timestamptz
+  updatedAt  DateTime @updatedAt @db.Timestamptz // Updated At field
+  deletedAt  DateTime? @db.Timestamptz // Soft delete field
+
+  @@map("cart_items")
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz // Updated At field
+  deletedAt   DateTime? @db.Timestamptz // Soft delete field
+
+  @@map("reviews")
+}
