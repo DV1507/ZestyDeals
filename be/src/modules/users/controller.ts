@@ -9,7 +9,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   const user = await prismaClient?.user?.findFirst({
     where: {
-      email: username,
+      OR: [{ email: username }, { name: username }, { number: username }],
     },
   });
   if (!user) {
@@ -28,20 +28,39 @@ export const signIn = async (req: Request, res: Response) => {
   }
   const token = jwt.sign({ id: user.id }, JWT_SECRET || "random123");
 
-  return generalResponse(res, 200, { token }, "User logged in successfully");
+  return generalResponse(
+    res,
+    200,
+    { token },
+    "User logged in successfully",
+    true
+  );
 };
 
 export const signUp = async (req: Request, res: Response) => {
   const { email, name, number, password } = req.body;
 
-  const userExists = await prismaClient?.user?.findFirst({
+  const existingUser = await prismaClient?.user?.findFirst({
     where: {
-      email,
+      OR: [{ email }, { name }, { number }],
     },
   });
 
-  if (userExists) {
-    return generalResponse(res, 400, {}, "User Already Exists", true);
+  if (existingUser) {
+    const conflictField =
+      existingUser.email === email
+        ? "Email"
+        : existingUser.name === name
+        ? "Username"
+        : "Phone Number";
+
+    return generalResponse(
+      res,
+      400,
+      { success: false },
+      `${conflictField} Already Exists`,
+      true
+    );
   }
 
   const hashedPassword = await bcrypt?.hashSync(password, 10);
@@ -58,7 +77,7 @@ export const signUp = async (req: Request, res: Response) => {
   return generalResponse(
     res,
     201,
-    {},
+    { success: true },
     "User created successfully, Please Verify email",
     true
   );
