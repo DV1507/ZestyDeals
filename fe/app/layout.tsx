@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export const metadata: Metadata = {
   title: "Zepty Deals",
   description: "This is home page for Zepty Deals",
@@ -21,6 +22,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <ToastContainer
+            position="bottom-right"
+            pauseOnHover
+            toastClassName="dark:bg-black dark:text-white"
+          />
         </ThemeProvider>
       </body>
     </html>
