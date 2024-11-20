@@ -24,11 +24,12 @@ const validationMiddleware = <T>(
       if (error instanceof ZodError) {
         res.status(400).json({
           status: 400,
-          message: "Validation error",
+          message: `${error.errors[0].message}`,
           details: error.errors.map((err) => ({
             path: err.path.join("."),
             message: err.message,
           })),
+          toast: true,
         });
       }
       // For other errors, pass them to the default error handler

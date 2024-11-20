@@ -38,7 +38,7 @@ export const signIn = async (req: Request, res: Response) => {
 };
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, name, number, password } = req.body;
+  const { email, name, number, password, role } = req.body;
 
   const existingUser = await prismaClient?.user?.findFirst({
     where: {
@@ -71,6 +71,7 @@ export const signUp = async (req: Request, res: Response) => {
       name,
       number,
       password: hashedPassword,
+      role,
     },
   });
 

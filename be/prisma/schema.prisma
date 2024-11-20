@@ -6,6 +6,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+enum UserRole {
+  CUSTOMER
+  SELLER
+  ADMIN
+  MODERATOR
+}
 
 model User {
   id        Int       @id @default(autoincrement())
@@ -21,7 +27,7 @@ model User {
   createdAt DateTime  @default(now()) @db.Timestamptz
   updatedAt DateTime  @updatedAt @db.Timestamptz // Updated At field
   deletedAt DateTime? @db.Timestamptz // Soft delete field
-
+  role      UserRole       @default(CUSTOMER) // Default role is customer
   @@map("users")
 }
 

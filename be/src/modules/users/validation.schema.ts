@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserRole } from "./enum";
 
 export const signupSchema = z.object({
   email: z.string().email({ message: "Invalid email format" }),
@@ -9,6 +10,9 @@ export const signupSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
+  role: z.enum([UserRole.CUSTOMER, UserRole.SELLER], {
+    message: "Role is required and must be a valid role",
+  }),
 });
 
 export const loginSchema = z.object({
