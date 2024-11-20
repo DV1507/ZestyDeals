@@ -1,3 +1,4 @@
+import { UserRole } from "@/constant/enums";
 import { z } from "zod";
 
 export const signupSchema = z
@@ -11,6 +12,9 @@ export const signupSchema = z
       .string()
       .min(8, { message: "Password must be at least 8 characters" }),
     confirmPassword: z.string(),
+    role: z.enum([UserRole.CUSTOMER, UserRole.SELLER], {
+      message: "Role is required and must be a valid role",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

@@ -22,7 +22,21 @@ import { useForm } from "react-hook-form";
 import { signupSchema } from "../validation-schema";
 import { z } from "zod";
 import { useSignUpPostApi } from "../helper";
-const Signup = () => {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UserRole } from "@/constant/enums";
+import { Dispatch, SetStateAction } from "react";
+
+export type SignUp = {
+  setCurrentTab: Dispatch<SetStateAction<"signIn" | "signUp">>;
+};
+
+const Signup = ({ setCurrentTab }: SignUp) => {
   const { isError, isLoading, signUpApi } = useSignUpPostApi();
 
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -37,10 +51,12 @@ const Signup = () => {
       confirmPassword: "",
     },
   });
-  // ===============================WIP=============================================
-  //todo navigate to login if successfully signupo
+
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     const res = await signUpApi(values);
+    if (res?.data?.success) {
+      setCurrentTab("signIn");
+    }
     if (!isError) {
       console.log(res);
     }
@@ -106,15 +122,44 @@ const Signup = () => {
             />
             <FormField
               control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>I want to sign up as</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select purpose to signup" />
+                      </SelectTrigger>
+                    </FormControl>
+
+                    <SelectContent defaultValue={UserRole.CUSTOMER}>
+                      <SelectItem
+                        key={UserRole.CUSTOMER}
+                        value={UserRole.CUSTOMER}
+                      >
+                        {UserRole.CUSTOMER}
+                      </SelectItem>
+                      <SelectItem key={UserRole.SELLER} value={UserRole.SELLER}>
+                        {UserRole.SELLER}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Enter your password</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your number eg:+91 1234567890"
-                      {...field}
-                    />
+                    <Input placeholder="Enter a strong password" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -128,10 +173,7 @@ const Signup = () => {
                 <FormItem>
                   <FormLabel>Confirm password</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your number eg:+91 1234567890"
-                      {...field}
-                    />
+                    <Input placeholder="Confirm password" {...field} />
                   </FormControl>
 
                   <FormMessage />

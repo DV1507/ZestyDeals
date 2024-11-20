@@ -1,5 +1,11 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +22,12 @@ import { useForm } from "react-hook-form";
 import { useSignInPostApi } from "../helper";
 import { loginSchema } from "../validation-schema";
 import { z } from "zod";
-const SignIn = () => {
+import { Dispatch, SetStateAction } from "react";
+
+export type SignUp = {
+  setCurrentTab: Dispatch<SetStateAction<"signIn" | "signUp">>;
+};
+const SignIn = ({ setCurrentTab }: SignUp) => {
   const { isLoading, signInApi } = useSignInPostApi();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -85,6 +96,14 @@ const SignIn = () => {
           </form>
         </Form>
       </CardContent>
+      <CardFooter>
+        <Button
+          onClick={() => setCurrentTab("signUp")}
+          className="bg-inherit p-0 hover:bg-inherit"
+        >
+          Don&apos;t have an account? Sign Up
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
