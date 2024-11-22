@@ -3,7 +3,9 @@ import { toast } from "react-toastify";
 
 export const getToken = () => {
   if (typeof window !== "undefined") {
-    return localStorage?.getItem("auth") ? localStorage?.getItem("auth") : null;
+    return localStorage?.getItem("authToken")
+      ? localStorage?.getItem("authToken")
+      : null;
   }
 };
 export const getAuthorizationHeader = () => `${getToken()}`;

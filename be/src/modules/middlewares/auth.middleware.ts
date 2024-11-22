@@ -5,9 +5,9 @@ export async function authMiddleware(req: any, res: any, next: any) {
   const token = req.headers.authorization;
   try {
     const payload = jwt.verify(token, JWT_SECRET || "random123");
-
+    console.warn({ payload });
     // @ts-ignore
-    req?.id = payload?.id;
+    req?.user = payload?.user;
     next();
   } catch (error) {
     return generalResponse(res, 403, {}, "Unauthorized", true);

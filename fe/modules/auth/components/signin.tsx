@@ -23,12 +23,15 @@ import { useSignInPostApi } from "../helper";
 import { loginSchema } from "../validation-schema";
 import { z } from "zod";
 import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/hooks/axios/axiosInstance";
 
 export type SignUp = {
   setCurrentTab: Dispatch<SetStateAction<"signIn" | "signUp">>;
 };
 const SignIn = ({ setCurrentTab }: SignUp) => {
   const { isLoading, signInApi } = useSignInPostApi();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -41,7 +44,14 @@ const SignIn = ({ setCurrentTab }: SignUp) => {
   // ===============================WIP=============================================
   //todo navigate to dashboard if signin
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    await signInApi(values);
+    const res = await signInApi(values);
+    if (res?.data?.success) {
+      router.push("/dashboard");
+      if (localStorage) {
+        localStorage.setItem("authToken", res?.data?.token);
+        axiosInstance.defaults.headers.Authorization = `${res?.data?.token}`;
+      }
+    }
   };
   return (
     <Card className="">

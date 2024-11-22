@@ -11,6 +11,14 @@ export const signIn = async (req: Request, res: Response) => {
     where: {
       OR: [{ email: username }, { name: username }, { number: username }],
     },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      number: true,
+      password: true,
+      role: true,
+    },
   });
   if (!user) {
     return generalResponse(
@@ -26,12 +34,14 @@ export const signIn = async (req: Request, res: Response) => {
   if (!validPassword) {
     return generalResponse(res, 403, {}, "Sorry credential are invalid", true);
   }
-  const token = jwt.sign({ id: user.id }, JWT_SECRET || "random123");
+
+  const userData = { ...user, password: undefined };
+  const token = jwt.sign({ user: userData }, JWT_SECRET || "random123");
 
   return generalResponse(
     res,
     200,
-    { token },
+    { success: true, token },
     "User logged in successfully",
     true
   );
