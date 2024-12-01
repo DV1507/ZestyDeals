@@ -4,7 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   useEffect(() => {
@@ -17,10 +17,13 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       }
     }
   });
+  const queryClient = new QueryClient();
   return (
     <SidebarProvider>
       <AppSidebar />
-      {children}
+      <QueryClientProvider client={queryClient}>
+        {children}{" "}
+      </QueryClientProvider>
     </SidebarProvider>
   );
 };

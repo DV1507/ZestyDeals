@@ -25,10 +25,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 const CreateProductModal = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { isLoading, addProductApi } = useAddProductPostApi();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),
@@ -43,12 +45,17 @@ const CreateProductModal = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof createProductSchema>) => {
-    const res = await addProductApi(values);
-    if (res?.data?.success) {
+    await addProductApi(values);
+  };
+  const mutation = useMutation({
+    mutationFn: onSubmit,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       form.reset();
       setIsModalOpen(false);
-    }
-  };
+    },
+  });
   return (
     <div className="w-full flex justify-end">
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -66,8 +73,9 @@ const CreateProductModal = () => {
           </DialogHeader>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit, (e) =>
-                console.log("error", e)
+              onSubmit={form.handleSubmit(
+                (data) => mutation.mutate(data),
+                (e) => console.log("error", e)
               )}
               className="space-y-5  "
             >

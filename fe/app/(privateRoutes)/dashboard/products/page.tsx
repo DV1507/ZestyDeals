@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import AddProductForm from "@/modules/products/addProducts";
+import AddProductForm from "@/modules/products";
 export default function Page() {
   return (
     <CommonlayoutWrapper
