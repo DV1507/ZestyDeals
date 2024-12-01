@@ -1,7 +1,7 @@
 import { Router } from "express";
 import validationMiddleware from "../middlewares/validation.middleware";
 import { createProductSchema } from "./validation.schema";
-import { createProducts } from "./controller";
+import { createProducts, getAllProducts } from "./controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
@@ -12,5 +12,6 @@ router.post(
   authMiddleware,
   createProducts
 );
+router.post(`${basePath}/get-all`, authMiddleware, getAllProducts);
 
 export const productRouter = router;
