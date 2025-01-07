@@ -11,8 +11,12 @@ import Image from "next/image";
 import { Product } from "../types";
 import SkeletonLoader from "./components/productSkeleton";
 import { format } from "date-fns";
+import { Dispatch, SetStateAction } from "react";
 
-const ProductListing = () => {
+interface ProductListingProps {
+  setProduct: Dispatch<SetStateAction<Product | null>>;
+}
+const ProductListing = ({ setProduct }: ProductListingProps) => {
   const { getProductsApi } = useGetProductPostApi();
 
   const { data, isLoading } = useQuery({
@@ -30,10 +34,11 @@ const ProductListing = () => {
             <Card
               className="w-[350px] hover:shadow-lg hover:shadow-primary/30  transition-all duration-500 border border-primary/20"
               key={product.id}
+              onClick={() => setProduct(product)}
             >
               <CardHeader className="flex flex-row justify-between">
                 <div>
-                  <CardTitle className="text-xl text-pretty text-wrap">
+                  <CardTitle className="text-xl text-pretty ">
                     {product?.name || "No Name Available"}
                   </CardTitle>
                   <CardDescription>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   useEffect(() => {
@@ -22,7 +23,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <AppSidebar />
       <QueryClientProvider client={queryClient}>
-        {children}{" "}
+        {children} <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SidebarProvider>
   );

@@ -11,3 +11,12 @@ export const createProductSchema = z.object({
   //   .int()
   //   .nonnegative("Category ID must be a non-negative integer"),
 });
+
+export const deleteProductSchema = z.object({
+  id: z.number().nonnegative().int("Product ID must be a non-negative integer"),
+
+  // categoryId: z
+  //   .number()
+  //   .int()
+  //   .nonnegative("Category ID must be a non-negative integer"),
+});

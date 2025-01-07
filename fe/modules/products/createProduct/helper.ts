@@ -14,3 +14,24 @@ export const useAddProductPostApi = () => {
   };
   return { isLoading, addProductApi, isError };
 };
+
+export const useEditProductPostApi = () => {
+  const { isLoading, post, isError } = useAxiosPost(`${basePath}/edit`);
+  const editProductApi = async (
+    payload: z.infer<typeof createProductSchema>,
+    id: number
+  ) => {
+    const res = await post({ ...payload, id });
+    return res;
+  };
+  return { isLoading, editProductApi, isError };
+};
+
+export const useDeleteProductPostApi = () => {
+  const { isLoading, post, isError } = useAxiosPost(`${basePath}/delete`);
+  const deleteProductApi = async (id: number) => {
+    const res = await post({ id });
+    return res;
+  };
+  return { isLoading, deleteProductApi, isError };
+};
