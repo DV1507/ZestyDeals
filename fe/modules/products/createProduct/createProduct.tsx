@@ -66,6 +66,10 @@ const CreateProductModal = ({
       form.reset(product);
       setIsModalOpen(true);
     }
+    return () => {
+      form.reset();
+      setIsModalOpen(false);
+    };
   }, [product]);
 
   const onSubmit = async (values: z.infer<typeof createProductSchema>) => {
@@ -100,7 +104,16 @@ const CreateProductModal = ({
 
   return (
     <div className="w-full flex justify-end">
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Dialog
+        open={isModalOpen}
+        onOpenChange={(isOpen) => {
+          setIsModalOpen(isOpen);
+          if (!isOpen) {
+            form.reset();
+            setProduct(null);
+          }
+        }}
+      >
         <DialogTrigger asChild>
           <Button variant="default">
             {product ? "Edit" : "Create"} Product

@@ -41,6 +41,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
     const user = req.user;
+    const { limit, offset } = req.body;
     const products = await prismaClient?.product?.findMany({
       where: {
         sellerId: user?.id,
@@ -49,6 +50,8 @@ export const getAllProducts = async (req: Request, res: Response) => {
       orderBy: {
         createdAt: "desc",
       },
+      take: limit,
+      skip: offset * limit,
     });
 
     if (!products.length) {
